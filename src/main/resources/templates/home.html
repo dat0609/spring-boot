@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<script>
+	document.write('<script src="http://'
+			+ (location.host || 'localhost').split(':')[0]
+			+ ':8080/livereload.js?snipver=1"></' + 'script>')
+</script>
+<title>Home</title>
+</head>
+<body>
+	<div sec:authorize="isAuthenticated()">
+		Welcome <b><a th:href="@{/profile}" sec:authentication="name"></a></b>
+		&nbsp; <span sec:authentication="principal.authorities"></span>
+	</div>
+	<form th:action="@{/logout}" method="post">
+		<input type="submit" value="Logout">
+	</form>
+	<div>
+		<ul>
+			<li><a th:href="@{/}">Home</a></li>
+			<li><a th:href="@{/cart}">Cart</a></li>
+
+		</ul>
+	</div>
+	<div>
+		<div>
+			<a th:href="@{/new}"
+				sec:authorize="hasAnyAuthority('ADMIN', 'EDITOR')">Create New
+				Product </a>
+		</div>
+		<h1>List of Product</h1>
+		<table border="1">
+			<thead>
+				<tr>
+					<td>Id</td>
+					<td>Name</td>
+					<td>Price</td>
+					<td>Date</td>
+					<td>Image</td>
+					<td>Action</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="product: ${list}">
+					<td th:text="${product.id}"></td>
+					<td><a th:href="@{/detail/{id}(id=${product.id})}"
+						th:text="${product.name}"></a></td>
+					<td th:text="${product.price}"></td>
+					<td th:text="${product.createDay}"></td>
+					<td>
+						<img alt="" th:src="@{${product.getImg}}">
+					</td>
+
+
+					<td sec:authorize="hasAnyAuthority('ADMIN', 'EDITOR')"><a
+						th:href="@{'/edit/' + ${product.id}}">Edit</a> &nbsp;&nbsp;&nbsp;
+						<a th:href="@{'/delete/' + ${product.id}}">Delete</a></td>
+					<td>
+						<form th:action="@{/add}" method="post">
+							<input type="hidden" th:value="${product.id}" name="id">
+							<button type="submit">Add to cart</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div>
+			Total Item : [[${totalItem}]] - Page [[${currentPage}]] of
+			[[${totalPage}]] &nbsp; <span
+				th:each="i: ${#numbers.sequence(1, totalPage)}"> <a
+				th:if="${i != currentPage}" th:href="@{'/page/' +${i}}">
+					[[${i}]] </a> <span th:unless="${i != currentPage}">[[${i}]] </span>
+				&nbsp;&nbsp;
+			</span>
+		</div>
+	</div>
+</body>
+</html>
+
