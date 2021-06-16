@@ -13,12 +13,11 @@ public class FileConfig implements WebMvcConfigurer{
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		
-		Path productUploaddir = Paths.get("/.product-images");
+		Path productUploaddir = Paths.get("./product-images");
 		String productUploadPath = productUploaddir.toFile().getAbsolutePath();
 		
 		registry.addResourceHandler("/product-images/**").addResourceLocations("file:/" + productUploadPath + "/"); 
 		
-		WebMvcConfigurer.super.addResourceHandlers(registry);
 	}
 
 }
